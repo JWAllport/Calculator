@@ -23,50 +23,74 @@ const Calculator = () => {
     }
 
     const renderNumberButtons = () => {
-        const buttons = [];
-        for (let i = 1; i <10; i++) {
-            buttons.push(
-                <button key={i} className="button" type="button" onClick={() => handleNumberClick(i.toString())}>
-                    {i}
-                </button>
-            );
-        }
-        return buttons;
+        return (
+            <div className="calculator">
+                  <button id="seven" key="7" className="button" type="button" onClick={() => handleNumberClick("7")}>7</button>
+                <button id="eight" key="8" className="button" type="button" onClick={() => handleNumberClick("8")}>8</button>
+                <button id="nine" key="9" className="button" type="button" onClick={() => handleNumberClick("9")}>9</button>
+
+                <button id="four" key="4" className="button" type="button" onClick={() => handleNumberClick("4")}>4</button>
+                <button id="five" key="5" className="button" type="button" onClick={() => handleNumberClick("5")}>5</button>
+                <button id="six" key="6" className="button" type="button" onClick={() => handleNumberClick("6")}>6</button>
+
+                <button id="one" key="1" className="button" type="button" onClick={() => handleNumberClick("1")}>1</button>
+                <button id="two" key="2" className="button" type="button" onClick={() => handleNumberClick("2")}>2</button>
+                <button id="three" key="3" className="button" type="button" onClick={() => handleNumberClick("3")}>3</button>
+
+                <button id="zero" key="0" className="button" type="button" onClick={() => handleNumberClick("0")}>0</button>                
+              
+            </div>
+        )
     }
     const renderOperatorButtons = () => {
-        const symbols = ["+", "-", "/", "%", "*"];
-        const buttons = [];
-        for(let i = 0; i < symbols.length; i++) {
-            buttons.push(
-                <button key={symbols[i]} className="button" type="button" onClick={() => handleOperatorClick(symbols[i])}>
-                        {symbols[i]}
+        return(
+            <span id="operations">
+                <button key="+" id="add" className="operator_button" type="button" onClick={() => handleOperatorClick("+")}>
+                    +
                 </button>
-            );
-        }
-        return buttons;
+                <button key="-" id="subtract" className="operator_button" type="button" onClick={() => handleOperatorClick("-")}>
+                    -
+                </button>
+                <button key="*" id="multiply" className="operator_button" type="button" onClick={() => handleOperatorClick("*")}>
+                    *
+                </button>
+                <button key="/" id="divide" className="button" type="button" onClick={() => handleOperatorClick("/")}>
+                    /
+                </button>
+            </span>
+        )
+    }
+    const renderDecimal = () => {
+        return (
+            <button key="." id="decimal" className="decimal_button" type="button" onClick={() => handleClear()}>
+                .
+            </button>
+        );
     }
     const renderClear = () => {
         return (
-        <button key="C" id="clear" className="button" type="button" onClick={() => handleClear()}>
+        <button key="C" id="clear" className="clear_button" type="button" onClick={() => handleClear()}>
                     C
-                </button>
+        </button>
         );
     }
     const renderEquals = () => {
         return (
-        <button key="E" id="equals" className="button" type="button" onClick={() => handleEquals()}>
-                    E
+        <button key="=" id="equals" className="button" type="button" onClick={() => handleEquals()}>
+                    =
                 </button>
         );
     }
     
     return (
         <div className="calculator">
-          <div className="display">{displayValue}</div>
+          <div id="display">{displayValue}</div>
           {renderNumberButtons()}
+          {renderDecimal()}
+          {renderEquals()}
           {renderOperatorButtons()}
           {renderClear()}
-          {renderEquals()}
+        
         </div>
       );
 }
