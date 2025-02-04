@@ -62,7 +62,7 @@ const calculatorSlice = createSlice({
             let result;
             switch(operation) {
                 case OPERATOR.MULT:
-                    result = Number.parseInt(left) + Number.parseInt(right);
+                    result = Number.parseInt(left) * Number.parseInt(right);
                     displayValue = displayValue.replace(match[0], result);
                     console.log(result);
                     break;
@@ -72,12 +72,12 @@ const calculatorSlice = createSlice({
                     console.log(result);
                     break;
                 case OPERATOR.ADD:
-                    result = Number.parseInt(left) - Number.parseInt(right);
+                    result = Number.parseInt(left) + Number.parseInt(right);
                     displayValue = displayValue.replace(match[0], result);
                     console.log(result);
                     break;
                 case OPERATOR.MIN:
-                    result = Number.parseInt(left) * Number.parseInt(right);
+                    result = Number.parseInt(left) - Number.parseInt(right);
                     displayValue = displayValue.replace(match[0], result);
                     console.log(result);
                     break;
