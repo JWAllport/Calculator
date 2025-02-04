@@ -7,7 +7,7 @@ const OPERATOR = {
     MULT: "*",
 }
 const initialState = {
-    displayValue: '0',
+    displayValue: '3 + 5 * 6 - 2 / 4',
     previousValue: null,
     operation: null,
 };
@@ -33,12 +33,12 @@ const calculatorSlice = createSlice({
             state.operation = null;
         },
         evaluateInput: (state, action) => {
-            let displayValue = state.displayValue;
+            let displayValue = state.displayValue.replaceAll(" ", "");
             state.previousValue = displayValue;
             const operators = ["*", "/", "+", "-"];
             //PEMDAS
             operators.forEach(operator => {
-                const regex = new RegExp(`[0-9]{1,2}\\${operator}[0-9]{1,2}`, 'g');
+                const regex = new RegExp(`[0-9]+\\${operator}[0-9]+`, 'g');
                 let matches = [...displayValue.matchAll(regex)];
                 while (matches.length) {
                     displayValue = solveFor(displayValue, matches, operator);
@@ -62,22 +62,22 @@ const calculatorSlice = createSlice({
             let result;
             switch(operation) {
                 case OPERATOR.MULT:
-                    result = Number.parseInt(left) * Number.parseInt(right);
+                    result = Number.parseFloat(left) * Number.parseFloat(right);
                     displayValue = displayValue.replace(match[0], result);
                     console.log(result);
                     break;
                 case OPERATOR.DIV:
-                    result = Number.parseInt(left) / Number.parseInt(right);
+                    result = Number.parseFloat(left) / Number.parseFloat(right);
                     displayValue = displayValue.replace(match[0], result);
                     console.log(result);
                     break;
                 case OPERATOR.ADD:
-                    result = Number.parseInt(left) + Number.parseInt(right);
+                    result = Number.parseFloat(left) + Number.parseFloat(right);
                     displayValue = displayValue.replace(match[0], result);
                     console.log(result);
                     break;
                 case OPERATOR.MIN:
-                    result = Number.parseInt(left) - Number.parseInt(right);
+                    result = Number.parseFloat(left) - Number.parseFloat(right);
                     displayValue = displayValue.replace(match[0], result);
                     console.log(result);
                     break;
