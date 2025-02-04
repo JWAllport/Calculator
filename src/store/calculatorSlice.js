@@ -1,5 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const OPERATOR = {
+    ADD: "+",
+    MIN: "-",
+    DIV: "/",
+    MULT: "*",
+}
 const initialState = {
     displayValue: '0',
     previousValue: null,
@@ -27,60 +33,78 @@ const calculatorSlice = createSlice({
             state.operation = null;
         },
         evaluateInput: (state, action) => {
-            let split = null;
-            let runningTotal = null;
+            let displayValue = state.displayValue;
+            state.previousValue = displayValue;
             //PEMDAS
             
-            let previous = "";
-            let operation = "";
-            for (let i = 0; i < state.displayValue.length; i++) {
-                let c = state.displayValue.charAt(i);
-                if (c === "*") {
-                    operation = "*";
-                } else if (Number.parseInt(c)) {
-                     if (operation === "*") {
-                         c = previous * Number.parseInt(c)
-                         state.displayValue = state.displayValue.substring(0, i-3) + state.displayValue.substring(i-3,i)
-                     }
-                     previous = c;
-                } else if (operation === "*") {
-                    c = previous * Number.parseInt(c);    
-                }        
-            }
-
-            switch(state.operation) {
-                case "*":
-                    split = state.displayValue.split("*");
-                    runningTotal = 1;
-                    split.forEach(foo =>{
-                        runningTotal *= foo;
-                    });
-                    state.displayValue = runningTotal.toString();
-                    state.previousValue = state.displayValue;
-                    break;
-                case "-":
-                    split = state.displayValue.split("-");
-                    let previous = null;
-                    split.forEach(foo => {
-                        if (previous !== null) {
-                            previous = Number.parseInt(previous) - Number.parseInt(foo);
-                        } else {
-                            previous = foo;
-                        }
-                    });
-                    state.previousValue = state.displayValue;
-                    state.displayValue = previous;
-                    
-                    break;
-                case "+": 
-                    break;
-                case "/":
-                    break;
-                case "%":
-                    break;
+            let hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
+            let hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9]{1,2}/g)];
+            let hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
+            let hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
+            while(hasMult || hasDiv || hasAdd || hasMin) {
+                if (hasMult.length) {
+                    displayValue = solveFor(displayValue, hasMult, "*");
+                    hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
+                    hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9{1,2}]/g)];
+                    hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
+                    hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
+                }
+                if (hasDiv.length) {
+                    displayValue = solveFor(displayValue, hasDiv, "/");
+                    hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
+                    hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9]{1,2}/g)];
+                    hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
+                    hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
+                }
+                if (hasAdd.length) {
+                    displayValue = solveFor(displayValue,hasAdd, "+");
+                    hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
+                    hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9]{1,2}/g)];
+                    hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
+                    hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
+                }
+                if (hasMin.length) {
+                    displayValue = solveFor(displayValue, hasMin, "-");
+                    hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
+                    hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9]{1,2}/g)];
+                    hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
+                    hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
+                } 
+                state.displayValue = displayValue;
+                
+                state.operation = null;
             }
         }    
     }
 });
+
+    function solveFor(displayValue, matches, operation) {
+        
+        matches.forEach(match => {
+            const left = match[0].split(operation)[0];
+            const right = match[0].split(operation)[1];
+            let result;
+            switch(operation) {
+                case OPERATOR.ADD:
+                     result = Number.parseInt(left) * Number.parseInt(right);
+                    console.log(match);
+                    break;
+                case OPERATOR.DIV:
+                    result = Number.parseInt(left) * Number.parseInt(right);
+                    console.log(match);
+                    break;
+                case OPERATOR.MIN:
+                    result = Number.parseInt(left) * Number.parseInt(right);
+                    console.log(match);
+                    break;
+                case OPERATOR.MULT:
+                    result = Number.parseInt(left) * Number.parseInt(right);
+                    displayValue = displayValue.replace(match[0], result);
+                    console.log(result);
+                    break;
+            }
+        });
+        return displayValue;
+    }
 export const { inputNumber, inputSymbol, clearInput, evaluateInput} = calculatorSlice.actions;
 export default calculatorSlice.reducer;
