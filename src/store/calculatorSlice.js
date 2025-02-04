@@ -35,45 +35,21 @@ const calculatorSlice = createSlice({
         evaluateInput: (state, action) => {
             let displayValue = state.displayValue;
             state.previousValue = displayValue;
+            const operators = ["*", "/", "+", "-"];
             //PEMDAS
+            operators.forEach(operator => {
+                const regex = new RegExp(`[0-9]{1,2}\\${operator}[0-9]{1,2}`, 'g');
+                let matches = [...displayValue.matchAll(regex)];
+                while (matches.length) {
+                    displayValue = solveFor(displayValue, matches, operator);
+                    matches = [...displayValue.matchAll(regex)];
+                }
+            })
             
-            let hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
-            let hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9]{1,2}/g)];
-            let hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
-            let hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
-            while(hasMult || hasDiv || hasAdd || hasMin) {
-                if (hasMult.length) {
-                    displayValue = solveFor(displayValue, hasMult, "*");
-                    hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
-                    hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9{1,2}]/g)];
-                    hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
-                    hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
-                }
-                if (hasDiv.length) {
-                    displayValue = solveFor(displayValue, hasDiv, "/");
-                    hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
-                    hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9]{1,2}/g)];
-                    hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
-                    hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
-                }
-                if (hasAdd.length) {
-                    displayValue = solveFor(displayValue,hasAdd, "+");
-                    hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
-                    hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9]{1,2}/g)];
-                    hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
-                    hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
-                }
-                if (hasMin.length) {
-                    displayValue = solveFor(displayValue, hasMin, "-");
-                    hasMult = [...displayValue.matchAll(/[0-9]{1,2}\*[0-9]{1,2}/g)];
-                    hasDiv = [...displayValue.matchAll(/[0-9]{1,2}\/[0-9]{1,2}/g)];
-                    hasAdd = [...displayValue.matchAll(/[0-9]{1,2}\+[0-9]{1,2}/g)];
-                    hasMin = [...displayValue.matchAll(/[0-9]{1,2}\-[0-9]{1,2}/g)];
-                } 
                 state.displayValue = displayValue;
                 
                 state.operation = null;
-            }
+
         }    
     }
 });
@@ -85,19 +61,22 @@ const calculatorSlice = createSlice({
             const right = match[0].split(operation)[1];
             let result;
             switch(operation) {
-                case OPERATOR.ADD:
-                     result = Number.parseInt(left) * Number.parseInt(right);
-                    console.log(match);
+                case OPERATOR.MULT:
+                    result = Number.parseInt(left) + Number.parseInt(right);
+                    displayValue = displayValue.replace(match[0], result);
+                    console.log(result);
                     break;
                 case OPERATOR.DIV:
-                    result = Number.parseInt(left) * Number.parseInt(right);
-                    console.log(match);
+                    result = Number.parseInt(left) / Number.parseInt(right);
+                    displayValue = displayValue.replace(match[0], result);
+                    console.log(result);
+                    break;
+                case OPERATOR.ADD:
+                    result = Number.parseInt(left) - Number.parseInt(right);
+                    displayValue = displayValue.replace(match[0], result);
+                    console.log(result);
                     break;
                 case OPERATOR.MIN:
-                    result = Number.parseInt(left) * Number.parseInt(right);
-                    console.log(match);
-                    break;
-                case OPERATOR.MULT:
                     result = Number.parseInt(left) * Number.parseInt(right);
                     displayValue = displayValue.replace(match[0], result);
                     console.log(result);
