@@ -7,7 +7,7 @@ const OPERATOR = {
     MULT: "*",
 }
 const initialState = {
-    displayValue: '3 + 5 * 6 - 2 / 4',
+    displayValue: '5 - 9 + 5',
     previousValue: null,
     operation: null,
 };
@@ -35,32 +35,56 @@ const calculatorSlice = createSlice({
         evaluateInput: (state, action) => {
             let displayValue = state.displayValue.replaceAll(" ", "");
             state.previousValue = displayValue;
-            const operators = ["*", "/", "+", "-"];
-            //PEMDAS
-            operators.forEach(operator => {
-                const regex = new RegExp(`[0-9]+\\${operator}[0-9]+`, 'g');
+        
+            function processPatterns(operator) {
+                let regex = new RegExp(`\-?[0-9]*\\.?[0-9]+[\\${operator}]\-?[0-9]*\\.?[0-9]+`, 'g');
                 let matches = [...displayValue.matchAll(regex)];
                 while (matches.length) {
-                    displayValue = solveFor(displayValue, matches, operator);
+                    displayValue = solveFor(displayValue, matches);
                     matches = [...displayValue.matchAll(regex)];
                 }
-            })
+            }
+
+             // MULT & DIV
+            processPatterns("\\*\\/");
             
-                state.displayValue = displayValue;
-                
-                state.operation = null;
+            //PLUS/MINUS
+            processPatterns("\\+\\-");
+
+            state.displayValue = displayValue;
+            
+            state.operation = null;
 
         }    
     }
 });
 
-    function solveFor(displayValue, matches, operation) {
+    function solveFor(displayValue, matches) {
         
         matches.forEach(match => {
-            const left = match[0].split(operation)[0];
-            const right = match[0].split(operation)[1];
+            
+            let operator;
+            if (match[0].includes("-")) {
+                operator = "-";
+            }
+            if (match[0].includes("+")) {
+                operator = "+";
+            }
+            if (match[0].includes("/")) {
+                operator = "/";
+            }
+            if (match[0].includes("*")) {
+                operator = "*";
+            }
+            const left = match[0].split(operator)[0];
+            const right = match[0].split(operator)[1];
+
+            // Handling negative numbers
+            if (operator === "-" && !left && right) {
+                right = `-${right}`;
+            }
             let result;
-            switch(operation) {
+            switch(operator) {
                 case OPERATOR.MULT:
                     result = Number.parseFloat(left) * Number.parseFloat(right);
                     displayValue = displayValue.replace(match[0], result);
