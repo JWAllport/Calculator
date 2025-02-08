@@ -2,7 +2,7 @@ button {
     width:33%;
 }
 #clear,#equal{
-    width:50%;
+    width:50% !important;
 }
 .calculator { 
     width:100%;

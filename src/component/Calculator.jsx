@@ -25,7 +25,7 @@ const Calculator = () => {
     const renderNumberButtons = () => {
         return (
             <div className="calculator">
-                  <button id="seven" key="7" className="button" type="button" onClick={() => handleNumberClick("7")}>7</button>
+                <button id="seven" key="7" className="button" type="button" onClick={() => handleNumberClick("7")}>7</button>
                 <button id="eight" key="8" className="button" type="button" onClick={() => handleNumberClick("8")}>8</button>
                 <button id="nine" key="9" className="button" type="button" onClick={() => handleNumberClick("9")}>9</button>
 
@@ -85,11 +85,32 @@ const Calculator = () => {
     return (
         <div className="calculator">
           <div id="display">{displayValue}</div>
-          {renderNumberButtons()}
-          {renderDecimal()}
-          {renderEquals()}
-          {renderOperatorButtons()}
-          {renderClear()}
+          <table>
+            <tbody>
+                <tr>
+                    <td>
+                        {renderNumberButtons()}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    {renderDecimal()}
+                
+                    {renderOperatorButtons()}
+                    
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    {renderClear()}
+                    {renderEquals()}
+                    </td>   
+                </tr>
+            </tbody>
+          </table>
+          
+         
+          
         
         </div>
       );
