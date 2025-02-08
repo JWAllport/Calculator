@@ -62,7 +62,7 @@ const Calculator = () => {
     }
     const renderDecimal = () => {
         return (
-            <button key="." id="decimal" className="decimal_button" type="button" onClick={() => handleClear()}>
+            <button key="." id="decimal" className="decimal_button" type="button" onClick={() => handleOperatorClick(".")}>
                 .
             </button>
         );

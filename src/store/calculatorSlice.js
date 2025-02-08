@@ -7,9 +7,10 @@ const OPERATOR = {
     MULT: "*",
 }
 const initialState = {
-    displayValue: '5 - 9 + 5',
+    displayValue: '5 . 5 . 5',
     previousValue: null,
     operation: null,
+    decimal: false
 };
 
 const calculatorSlice = createSlice({
@@ -17,6 +18,7 @@ const calculatorSlice = createSlice({
     initialState,
     reducers: {
         inputNumber: (state, action) => {
+            state.previousValue = action.payload;
             if (state.displayValue === '0') {
                 state.displayValue = action.payload;
             } else {
@@ -24,8 +26,19 @@ const calculatorSlice = createSlice({
             }
         },
         inputSymbol: (state, action) => {
-            state.displayValue += action.payload;
-            state.operation = action.payload;
+
+            if (action.payload === "." && !state.decimal) {
+                state.previousValue = action.payload;
+                state.displayValue += action.payload;
+                state.operation = action.payload;
+                state.decimal = true;
+            } else if (action.payload !== ".") {
+                state.previousValue = action.payload;
+                state.displayValue += action.payload;
+                state.operation = action.payload;
+                state.decimal = false;
+            }
+            
         },
         clearInput: (state = initialState) => {
             state.displayValue = '0';
@@ -33,7 +46,7 @@ const calculatorSlice = createSlice({
             state.operation = null;
         },
         evaluateInput: (state, action) => {
-            let displayValue = state.displayValue.replaceAll(" ", "");
+            let displayValue = repeatRemove(state.displayValue.replaceAll(" ", ""));
             state.previousValue = displayValue;
         
             function processPatterns(operator) {
@@ -58,6 +71,14 @@ const calculatorSlice = createSlice({
         }    
     }
 });
+
+    function repeatRemove(expression) {
+        
+    expression.split(/[\+\/\*\-]/)
+    return expression.replace(/([+*/]){2,}/g, (match) => match.slice(-1))
+    .replace(/([-]{2,})/g, '-')
+    .replace(/(\d)-+/g, '$1-');
+    }
 
     function solveFor(displayValue, matches) {
         
